@@ -10,7 +10,8 @@ import randomize from 'randomatic';
 
 const options = {
     httpOnly: true,
-    secure: true
+    secure: true,
+    sameSite: "Lax"
 }
 
 const generateAccessAndRefereshTokens = async(userId) =>{
@@ -226,6 +227,8 @@ const loginUser = asyncHandler(async (req, res) =>{
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+
+    console.log("res from login backend", res)
 
     return res
     .status(200)
