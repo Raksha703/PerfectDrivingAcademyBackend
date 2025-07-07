@@ -126,7 +126,6 @@ const registerUser = asyncHandler(async(req, res) => {
 
 })
 
-
 const sendEmail = async ({ to, subject, text, html }) => {    
 
     const sent = await transporter.sendMail({
@@ -141,9 +140,8 @@ const sendEmail = async ({ to, subject, text, html }) => {
       throw new ApiError(404, "Failed to send message to candidate");
     }
 
-    return res.status(201).json(
-        new ApiResponse(200, otp, "Message sent to candidate successfully")
-    )
+    return new ApiResponse(200, text, "Message sent to candidate successfully")
+    
 };
 
 const approveUser = asyncHandler(async (req, res) => {
