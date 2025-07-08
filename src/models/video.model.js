@@ -2,7 +2,7 @@ import mongoose, {Schema} from 'mongoose';
 
 const videoSchema = new Schema({
   candidate: String,
-  description: String,
+  description: { type: String, default: "feedback"},
   video: { type: String, required: true }
 }, { timestamps: true });
 

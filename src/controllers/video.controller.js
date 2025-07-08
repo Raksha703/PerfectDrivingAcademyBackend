@@ -9,8 +9,6 @@ console.log("in user controller backend")
 
 const uploadVideo = asyncHandler(async(req, res) => {
 
-    console.log(req.body)
-
     //take data from frontend
     const { candidate, description } = req.body;
 
