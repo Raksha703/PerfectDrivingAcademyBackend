@@ -43,10 +43,6 @@ const userSchema = new Schema({
     type: String, 
     required: (true, "Password is required")
   },  
-  confirmPassword: { 
-    type: String, 
-    required: (true, "Confirm Password is required")
-  }, 
   experience: {
     type: String
   },
@@ -70,7 +66,6 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'Logsheet' 
   }],
-  termsAccepted: { type: Boolean, default: false },
   isApproved: {
     type: Boolean,
     default: false, // new users are unapproved by default

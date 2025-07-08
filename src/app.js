@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
 
@@ -22,10 +23,11 @@ import courseRouter from "./routes/course.routes.js";
 
 //routes declaration
 // https:localhost:  8000/api/v1/users/register
-console.log("in app.js backend")
 
 app.use("/api/user", userRouter)
 app.use("/api/video", videoRouter)
 app.use("/api/course", courseRouter);
+
+app.use(errorHandler);
 
 export {app }

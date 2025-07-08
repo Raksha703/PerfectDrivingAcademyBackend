@@ -32,25 +32,31 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 
 const registerUser = asyncHandler(async(req, res) => {
 
-    console.log(req.body)
-
-    //take data from frontend
     let {
        username, name, age, address="", contactNumber, vehicleToLearn, termsAccepted, role, email, password, confirmPassword, experience, specialties, license, bio 
     } = req.body;
 
-    //validation
     if([name, email, username, password].some((field) => field?.trim() === "")){
         throw new ApiError(400, 'All fields are required');
     }
     if(Number(age)<18){
         throw new ApiError(400, "Not eligible to drive")
     }
+    const existingContact = await User.findOne({ contactNumber });
+
+    if (existingContact) {
+        throw new ApiError(400, 'Already registered with this contact number');
+    }
     if (!/^[6-9]\d{9}$/.test(contactNumber.toString())) {
         throw new ApiError(400, 'Invalid contact number');
     }
-    if(!termsAccepted){
+    if(termsAccepted==="false"){
         throw new ApiError(400, 'Terms and Conditions are required to accept');
+    }
+    const existingEmail = await User.findOne({ email });
+
+    if (existingEmail) {
+        throw new ApiError(400, 'Already registered with this email address');
     }
     if(!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)){
         throw new ApiError(400, 'Invalid email address');
@@ -68,8 +74,6 @@ const registerUser = asyncHandler(async(req, res) => {
         specialties = specialties.split(',').map(s => s.trim());
     }
 
-
-    //check if user exists
     const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
@@ -78,7 +82,6 @@ const registerUser = asyncHandler(async(req, res) => {
         throw new ApiError(409, "User with email or username already exists")
     }
 
-    //avatar
     let avatarUrl = undefined;
     const avatarLocalPath = req.files?.avatar?.[0]?.path;
     if (avatarLocalPath) {
@@ -103,7 +106,6 @@ const registerUser = asyncHandler(async(req, res) => {
         role,
         email, 
         password: hashPassword,
-        confirmPassword,
         username,
         experience,
         specialties,
@@ -168,8 +170,8 @@ const updateUser = asyncHandler(async(req, res)=> {
     const user = await User.findById(userId);
 
     if (!user) {
-    throw new ApiError(404, "User not found");
-  }
+        throw new ApiError(404, "User not found");
+    }
 
     if(name) user.name = name;
     if(bio) user.bio = bio;
@@ -226,8 +228,6 @@ const loginUser = asyncHandler(async (req, res) =>{
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-    console.log("res from login backend", res)
-
     return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -268,7 +268,6 @@ const logoutUser = asyncHandler(async(req, res) => {
 const auth = asyncHandler(async (req, res) => {
 
   try {
-
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -362,15 +361,17 @@ const getAllInstructors = asyncHandler(async(req, res) => {
 })
 
 const deleteUser = asyncHandler( async (req, res) => {
-    
-    const user = await User.deleteOne({ _id: req.params.userId  });
-    
-    if (!user) {
-        throw new ApiError(500, `User with id: ${req.params.userId } not found. No users were deleted.`);
-    }
+    const user = await User.findById(req.params.userId);
 
-    return res.status(201).json(
-        new ApiResponse(200, "User deleted Successfully")
+    if (!user) {
+        throw new ApiError(500, `User with id: ${req.params.userId} not found. No users were deleted.`);
+    }
+    
+    const logsheetdleted = await Logsheet.deleteMany({ username: user.username });
+    const userdleteed = await User.deleteOne({ _id: req.params.userId  });
+
+    return res.status(200).json(
+        new ApiResponse(200, "User and associated logsheets deleted Successfully")
     )
 
 });
@@ -502,7 +503,7 @@ const transporter = nodemailer.createTransport({
 const sendOtp = asyncHandler( async (req, res) => {
     const { email } = req.body;
     const otp = randomize('0', 6);
-    console.log("otp: ", otp)
+    
     const mailOptions = {
       from: process.env.AUTH_EMAIL, 
       to: email,
@@ -522,7 +523,7 @@ const sendOtp = asyncHandler( async (req, res) => {
 })
 
 const sendMsg = asyncHandler(async (req, res) => {
-    const { subject, email, msg } = req.body; // ✅ Use req.body, not req.params
+    const { subject, email, msg } = req.body;
 
     if (!subject || !email || !msg) {
         throw new ApiError(400, "All fields (subject, email, message) are required");
@@ -556,7 +557,6 @@ const sendMsg = asyncHandler(async (req, res) => {
             new ApiResponse(200, "Message sent successfully", null)
         );
     } catch (error) {
-        console.error("Email send error:", error);
         throw new ApiError(500, "Internal Server Error while sending email");
     }
 });

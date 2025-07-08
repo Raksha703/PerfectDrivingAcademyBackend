@@ -5,8 +5,6 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router()
 
-console.log("in user route backend")
-
 router.route("/register").post(
     upload.fields([
         {

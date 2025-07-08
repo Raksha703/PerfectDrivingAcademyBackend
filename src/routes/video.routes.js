@@ -4,8 +4,6 @@ import {upload} from "../middlewares/multer.middleware.js";
 
 const router = Router()
 
-console.log("in video route backend")
-
 router.route("/upload").post(
     upload.fields([
         {

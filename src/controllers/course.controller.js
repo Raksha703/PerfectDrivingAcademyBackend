@@ -6,7 +6,6 @@ import {ApiResponse} from "../utils/ApiResponse.js";
 import fs from "fs";
 
 const uploadCourse = asyncHandler(async(req, res) => {
-    console.log(req.body)
 
     //take data from frontend
     let {
