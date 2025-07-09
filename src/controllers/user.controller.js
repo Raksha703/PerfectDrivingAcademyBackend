@@ -561,4 +561,22 @@ const sendMsg = asyncHandler(async (req, res) => {
     }
 });
 
-export { updateUser, approveUser, sendMsg, sendOtp, registerUser, loginUser, logoutUser, auth, refreshAccessToken, getAllCandidates, getAllInstructors, deleteUser, getLogsheet, uploadLogsheet, updateLogsheet, deleteLogsheet};
+const markEligible = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  user.isCertificateEligible = true;
+  await user.save();
+
+  await sendEmail({
+      to: user.email,
+      subject: "Eligible for Cetificate",
+      text: `Hi ${user.name}, you are now eligible to apply for the certificate. Visit the site or fill the form using the link https://forms.gle/AcFePXAn2uu9gBy99 to get the certificate.`
+    });
+
+  return res.status(200).json(new ApiResponse(200, "User approved for certification successfully"));
+});
+
+export {markEligible, updateUser, approveUser, sendMsg, sendOtp, registerUser, loginUser, logoutUser, auth, refreshAccessToken, getAllCandidates, getAllInstructors, deleteUser, getLogsheet, uploadLogsheet, updateLogsheet, deleteLogsheet};

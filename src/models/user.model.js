@@ -70,6 +70,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false, // new users are unapproved by default
   },
+  isCertificateEligible:{
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true });
 
 userSchema.pre("save", async function(next) {

@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { sendMsg, updateUser, sendOtp, registerUser, loginUser, logoutUser, auth, refreshAccessToken, getAllCandidates, getAllInstructors, deleteUser, getLogsheet, uploadLogsheet, updateLogsheet, deleteLogsheet, approveUser } from "../controllers/user.controller.js";
+import { sendMsg, updateUser, sendOtp, registerUser, loginUser, logoutUser, auth, refreshAccessToken, getAllCandidates, getAllInstructors, deleteUser, getLogsheet, uploadLogsheet, updateLogsheet, deleteLogsheet, approveUser, markEligible } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -75,6 +75,10 @@ router.route("/sendMsg").post(
 
 router.route("/approveUser/:userId").patch(
     approveUser
+)
+
+router.route("/markEligible/:userId").patch(
+    markEligible
 )
 
 export default router;
