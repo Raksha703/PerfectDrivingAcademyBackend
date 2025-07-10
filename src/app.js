@@ -10,6 +10,10 @@ app.use(cors({
     credentials : true
 }))
 
+app.get('/api/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 app.use(express.json({limit:"16kb"}))
 app.use(express.urlencoded({extended : true, limit : "16kb"}))
 app.use(express.static("public"))
