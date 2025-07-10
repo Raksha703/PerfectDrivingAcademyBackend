@@ -508,7 +508,7 @@ const sendOtp = asyncHandler( async (req, res) => {
       from: process.env.AUTH_EMAIL, 
       to: email,
       subject: 'OTP for Registration',
-      text: `Your OTP for Registration at Perfect Car Drivng Academy is ${otp}.`,
+      text: `Hey\nYour OTP for Registration at Perfect Car Drivng Academy is ${otp}. \n\nRegards,\nMahesh Vishwakarma\nPerfect Car riving Training Academy,\nDhamnod`,
     };
 
     const sent = await transporter.sendMail(mailOptions);
@@ -573,7 +573,7 @@ const markEligible = asyncHandler(async (req, res) => {
   await sendEmail({
       to: user.email,
       subject: "Eligible for Cetificate",
-      text: `Hi ${user.name}, you are now eligible to apply for the certificate. Visit the site or fill the form using the link https://forms.gle/AcFePXAn2uu9gBy99 to get the certificate.`
+      text: `Hi ${user.name}, \nYou are now eligible to apply for the certificate. Visit the site or fill the form using the link https://forms.gle/AcFePXAn2uu9gBy99 to get the certificate. \n\nRegards,\nMahesh Vishwakarma\nPerfect Car riving Training Academy,\nDhamnod`
     });
 
   return res.status(200).json(new ApiResponse(200, "User approved for certification successfully"));
