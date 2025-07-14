@@ -524,15 +524,15 @@ const sendOtp = asyncHandler( async (req, res) => {
 
 const sendMsg = asyncHandler(async (req, res) => {
     const { subject, email, msg } = req.body;
+    console.log(req.body);
 
     if (!subject || !email || !msg) {
         throw new ApiError(400, "All fields (subject, email, message) are required");
     }
 
-    const plainText = `Message from ${name || "Anonymous"} (${email}):\n\n${msg}`;
+    const plainText = `Message from (${email}):\n\n${msg}`;
     const htmlContent = `
         <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${name || "Not provided"}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Message:</strong></p>
         <p>${msg}</p>
@@ -548,6 +548,7 @@ const sendMsg = asyncHandler(async (req, res) => {
 
     try {
         const sent = await transporter.sendMail(mailOptions);
+        console.log(sent)
 
         if (!sent) {
             throw new ApiError(500, "Message not sent");
